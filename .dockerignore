@@ -1,0 +1,14 @@
+node_modules
+server/node_modules
+dist
+server/db/backups
+.git
+.env
+server/.env
+npm-debug.log*
+*.log
+.DS_Store
+.idea
+.vscode
+cypress
+others

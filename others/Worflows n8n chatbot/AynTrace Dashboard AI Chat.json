@@ -1,0 +1,106 @@
+{
+  "name": "AynTrace Dashboard AI Chat",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "dashboard-chat",
+        "responseMode": "lastNode",
+        "options": {}
+      },
+      "id": "f1f09c50-a767-4dcc-8992-41b17a13a8c8",
+      "name": "Dashboard Chat Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        1472,
+        160
+      ],
+      "webhookId": "dashboard-chat"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.chatInput }}",
+        "batching": {},
+        "messages": {
+          "messageValues": [
+            {
+              "message": "={{ $json.body.systemPrompt || '/no_think\\nYou are AynTrace AI, a fast GPS fleet dashboard assistant. Reply in the user language. Return plain text only, never JSON. French: say appareils, never vehicules/véhicules. English: say devices, never vehicles. Use only provided context. Be concise: 1-2 lines, max 4 bullets. Do not invent data. Do not output think tags. For actions, guide to the correct dashboard page.' }}"
+            }
+          ]
+        }
+      },
+      "id": "43ad2b0a-0fd9-41bc-8b8d-6d93c54c63c6",
+      "name": "Dashboard LLM Chain",
+      "type": "@n8n/n8n-nodes-langchain.chainLlm",
+      "typeVersion": 1.7,
+      "position": [
+        1776,
+        160
+      ]
+    },
+    {
+      "parameters": {
+        "model": "ministral-3:3b",
+        "options": {
+          "temperature": 0.2,
+          "numPredict": 180,
+          "numCtx": 2048
+        }
+      },
+      "id": "d6a448c4-8c01-49eb-8e40-be62138fdacf",
+      "name": "Ollama Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        1680,
+        368
+      ],
+      "credentials": {
+        "ollamaApi": {
+          "id": "9yd0Ni12u89CLjbd",
+          "name": "Ollama account"
+        }
+      }
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Dashboard Chat Webhook": {
+      "main": [
+        [
+          {
+            "node": "Dashboard LLM Chain",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "Dashboard LLM Chain",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "0f2a26a2-1a4d-4da4-8105-8a6ed71fba23",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e4d1d42504819ac4a2fa3cf72c6fb53bf80301a2382ffe27df29f6f61cddeecc"
+  },
+  "id": "ao6nTLye1Ljuzi5r",
+  "tags": []
+}

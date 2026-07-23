@@ -1,0 +1,128 @@
+{
+  "name": "AynTrace AI Chat Agent",
+  "nodes": [
+    {
+      "parameters": {
+        "httpMethod": "POST",
+        "path": "geotrack-chat",
+        "responseMode": "lastNode",
+        "options": {
+          "rawBody": false
+        }
+      },
+      "id": "95ba538e-f6e3-43db-8dea-91d44019db78",
+      "name": "Chat Webhook",
+      "type": "n8n-nodes-base.webhook",
+      "typeVersion": 2,
+      "position": [
+        0,
+        0
+      ],
+      "webhookId": "geotrack-chat"
+    },
+    {
+      "parameters": {
+        "promptType": "define",
+        "text": "={{ $json.body.chatInput }}",
+        "options": {
+          "systemMessage": "={{ $json.body.systemPrompt || '/no_think\\nYou are the public sales assistant for AynTrace, a Tunisian GPS tracking platform. Reply in the visitor language. Return plain text only, never JSON. Use TND only for prices, never EUR/euro/USD. Use provided context for live stats and pricing. Tunisia only. Be concise. Use markdown bullets like - **Label:** value. For presentation links use localhost:8080 paths: [demo gratuite](http://localhost:8080/demo), [Rejoindre Nous](http://localhost:8080/join), [guide](http://localhost:8080/guide).' }}"
+        }
+      },
+      "id": "6df676d8-b57f-41cf-bd0b-310122ab69e1",
+      "name": "AI Agent",
+      "type": "@n8n/n8n-nodes-langchain.agent",
+      "typeVersion": 1.7,
+      "position": [
+        304,
+        0
+      ]
+    },
+    {
+      "parameters": {
+        "model": "ministral-3:3b",
+        "options": {
+          "numCtx": 1024,
+          "numPredict": 500
+        }
+      },
+      "id": "e8b05741-f8e7-4e6b-ac26-8f2a8d18941a",
+      "name": "Ollama Chat Model",
+      "type": "@n8n/n8n-nodes-langchain.lmChatOllama",
+      "typeVersion": 1,
+      "position": [
+        208,
+        208
+      ],
+      "credentials": {
+        "ollamaApi": {
+          "id": "9yd0Ni12u89CLjbd",
+          "name": "Ollama account"
+        }
+      }
+    },
+    {
+      "parameters": {
+        "sessionIdType": "customKey",
+        "sessionKey": "={{ $json.body.sessionId }}",
+        "contextWindowLength": 2
+      },
+      "id": "4949cd3c-7876-47b0-abc3-88ed30c2815c",
+      "name": "Window Buffer Memory",
+      "type": "@n8n/n8n-nodes-langchain.memoryBufferWindow",
+      "typeVersion": 1.3,
+      "position": [
+        352,
+        208
+      ]
+    }
+  ],
+  "pinData": {},
+  "connections": {
+    "Chat Webhook": {
+      "main": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "main",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Ollama Chat Model": {
+      "ai_languageModel": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_languageModel",
+            "index": 0
+          }
+        ]
+      ]
+    },
+    "Window Buffer Memory": {
+      "ai_memory": [
+        [
+          {
+            "node": "AI Agent",
+            "type": "ai_memory",
+            "index": 0
+          }
+        ]
+      ]
+    }
+  },
+  "active": true,
+  "settings": {
+    "executionOrder": "v1",
+    "binaryMode": "separate",
+    "availableInMCP": false
+  },
+  "versionId": "c1d950e2-ca73-441f-b630-98f13449fce9",
+  "meta": {
+    "templateCredsSetupCompleted": true,
+    "instanceId": "e4d1d42504819ac4a2fa3cf72c6fb53bf80301a2382ffe27df29f6f61cddeecc"
+  },
+  "id": "6sdW2yexUQfpKeWk",
+  "tags": []
+}
