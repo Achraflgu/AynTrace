@@ -4,26 +4,21 @@ GPS tracking and fleet management platform. PFE academic project.
 
 ---
 
-## 📸 Platform Overview
+## 📸 Screenshots
 
 <div align="center">
-  <p><strong>Main Platform Overview</strong></p>
-  <img src="public/screenshots/image170.png" alt="AynTrace Main Platform Banner" width="100%"/>
+  <img src="public/screenshots/image170.png" alt="AynTrace Application" width="100%"/>
   <br/><br/>
-  <p><strong>Live GPS Tracking & Fleet Map</strong></p>
-  <img src="public/screenshots/image166.png" alt="Live GPS Tracking & Fleet Map" width="100%"/>
+  <img src="public/screenshots/image120.png" alt="Dashboard" width="49%"/>
+  <img src="public/screenshots/image123.png" alt="Fleet Map" width="49%"/>
   <br/><br/>
-  <p><strong>Dashboard & Device Monitoring</strong></p>
-  <img src="public/screenshots/image120.png" alt="AynTrace Dashboard & Live Tracking" width="49%"/>
-  <img src="public/screenshots/image123.png" alt="Fleet Map & Real-Time Monitoring" width="49%"/>
+  <img src="public/screenshots/image078.png" alt="Devices" width="49%"/>
+  <img src="public/screenshots/image079.png" alt="Analytics" width="49%"/>
   <br/><br/>
-  <p><strong>Analytics & Fleet Operations</strong></p>
-  <img src="public/screenshots/image171.png" alt="Analytics & Statistics" width="49%"/>
-  <img src="public/screenshots/image164.png" alt="Device & Fleet Management" width="49%"/>
+  <img src="public/screenshots/image086.png" alt="Geofences" width="49%"/>
+  <img src="public/screenshots/image141.png" alt="Audit Logs" width="49%"/>
   <br/><br/>
-  <p><strong>Geofencing, Security & Settings</strong></p>
-  <img src="public/screenshots/image086.png" alt="Geofence Management" width="49%"/>
-  <img src="public/screenshots/image141.png" alt="Security & Audit Logs" width="49%"/>
+  <img src="public/screenshots/image139.png" alt="User Profile" width="100%"/>
 </div>
 
 ---
