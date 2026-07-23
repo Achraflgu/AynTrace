@@ -7,18 +7,22 @@ GPS tracking and fleet management platform. PFE academic project.
 **Prerequisites:** Node.js 20+, PostgreSQL 14+
 
 ```bash
-# 1. Install all dependencies
+# 1. Clone the repository and enter the project directory
+git clone https://github.com/Achraflgu/AynTrace.git
+cd AynTrace
+
+# 2. Install dependencies (Root + Server)
 npm install
 cd server && npm install && cd ..
 
-# 2. Set up environment
+# 3. Set up environment file
 cp server/.env.example server/.env
 # Edit server/.env if your PostgreSQL credentials differ
 
-# 3. Create database tables and demo data
+# 4. Create database tables and demo data
 npm run db:setup
 
-# 4. Start both frontend and backend
+# 5. Start both frontend and backend together
 npm run dev:all
 ```
 
