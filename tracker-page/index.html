@@ -1,0 +1,265 @@
+<!DOCTYPE html>
+<html lang="fr">
+
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no, viewport-fit=cover">
+  <title>AynTrace - Tracker GPS</title>
+  <link rel="preconnect" href="https://fonts.googleapis.com">
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&display=swap" rel="stylesheet">
+  <style>
+    :root {
+      --primary: #00E599;
+      --bg: #030303;
+      --card-bg: rgba(20, 20, 25, 0.7);
+      --border: rgba(255, 255, 255, 0.08);
+      --text: #ffffff;
+      --text-muted: #888888;
+    }
+
+    * { margin: 0; padding: 0; box-sizing: border-box; }
+
+    body {
+      font-family: 'Inter', -apple-system, sans-serif;
+      background-color: var(--bg);
+      background-image: 
+        radial-gradient(circle at 50% 0%, rgba(0, 229, 153, 0.15) 0%, transparent 60%),
+        linear-gradient(to bottom, transparent, rgba(0,0,0,0.8));
+      min-height: 100vh;
+      color: var(--text);
+      display: flex;
+      flex-direction: column;
+      align-items: center;
+      padding: 30px 20px;
+    }
+
+    .container { max-width: 420px; width: 100%; position: relative; z-index: 10; }
+
+    .header { text-align: center; margin-bottom: 30px; }
+
+    .logo-container {
+      width: 70px; height: 70px; margin: 0 auto 15px; border-radius: 20px;
+      background: rgba(0, 229, 153, 0.1); border: 1px solid rgba(0, 229, 153, 0.3);
+      display: flex; align-items: center; justify-content: center;
+      box-shadow: 0 0 30px rgba(0, 229, 153, 0.2);
+    }
+    
+    .logo-container svg { width: 34px; height: 34px; color: var(--primary); }
+
+    h1 { font-size: 26px; font-weight: 800; letter-spacing: -0.5px; margin-bottom: 6px; }
+    .subtitle { color: var(--text-muted); font-size: 15px; font-weight: 500; }
+
+    .card {
+      background: var(--card-bg); border: 1px solid var(--border); border-radius: 20px;
+      padding: 24px; margin-bottom: 20px; backdrop-filter: blur(20px);
+      box-shadow: 0 10px 40px rgba(0,0,0,0.5);
+    }
+
+    .status-badge {
+      display: inline-flex; align-items: center; gap: 8px; padding: 6px 14px;
+      border-radius: 100px; font-size: 13px; font-weight: 700; text-transform: uppercase; letter-spacing: 0.5px;
+    }
+
+    .status-waiting { background: rgba(234, 179, 8, 0.15); color: #fbbf24; border: 1px solid rgba(234, 179, 8, 0.3); }
+    .status-active { background: rgba(0, 229, 153, 0.15); color: var(--primary); border: 1px solid rgba(0, 229, 153, 0.3); }
+    .status-error { background: rgba(239, 68, 68, 0.15); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.3); }
+
+    .pulse { width: 8px; height: 8px; border-radius: 50%; background: currentColor; animation: pulse 1.5s infinite; }
+    @keyframes pulse {
+      0% { box-shadow: 0 0 0 0 rgba(currentColor, 0.4); transform: scale(0.95); }
+      70% { box-shadow: 0 0 0 10px transparent; transform: scale(1); }
+      100% { box-shadow: 0 0 0 0 transparent; transform: scale(0.95); }
+    }
+
+    .device-info { text-align: center; padding-bottom: 20px; border-bottom: 1px solid var(--border); margin-bottom: 20px; }
+    .device-name { font-size: 22px; font-weight: 700; margin-bottom: 5px; color: #fff; }
+    .enterprise-name { color: var(--text-muted); font-size: 14px; display: flex; align-items: center; justify-content: center; gap: 6px;}
+
+    .data-grid { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    .data-item {
+      background: rgba(0,0,0,0.3); border: 1px solid rgba(255,255,255,0.03);
+      border-radius: 14px; padding: 14px; text-align: left;
+    }
+    .data-label { font-size: 11px; color: var(--text-muted); margin-bottom: 6px; text-transform: uppercase; font-weight: 600; font-family: monospace; }
+    .data-value { font-size: 18px; font-weight: 700; color: #fff; font-variant-numeric: tabular-nums; }
+    .data-value span { color: var(--primary); }
+
+    .btn {
+      width: 100%; padding: 16px; border: none; border-radius: 14px;
+      font-size: 16px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+      display: flex; align-items: center; justify-content: center; gap: 8px;
+    }
+
+    .btn-primary {
+      background: var(--primary); color: #000; box-shadow: 0 4px 15px rgba(0, 229, 153, 0.25);
+    }
+    .btn-primary:active { transform: scale(0.98); }
+    .btn-danger { background: rgba(239, 68, 68, 0.1); color: #ef4444; border: 1px solid rgba(239, 68, 68, 0.2); }
+    .btn-sos {
+      background: linear-gradient(135deg, #ef4444, #b91c1c); color: #fff;
+      font-weight: 800; border: none; box-shadow: 0 4px 20px rgba(239, 68, 68, 0.4);
+      margin-top: 12px; transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+    }
+    .btn-sos:hover {
+      box-shadow: 0 6px 25px rgba(239, 68, 68, 0.6); transform: translateY(-1px);
+    }
+    .btn-sos:active {
+      transform: scale(0.97);
+    }
+    .btn-sos .pulse {
+      background-color: #fff !important; margin-right: 8px;
+    }
+
+    /* Custom Modern Modal Styles */
+    .modal-overlay {
+      position: fixed; inset: 0; background: rgba(0, 0, 0, 0.7);
+      backdrop-filter: blur(8px); z-index: 1000;
+      display: flex; align-items: center; justify-content: center;
+      transition: opacity 0.3s ease;
+    }
+    .modal-card {
+      background: var(--card-bg); border: 1px solid var(--border);
+      border-radius: 24px; padding: 30px; max-width: 380px; width: 90%;
+      text-align: center; box-shadow: 0 20px 50px rgba(0,0,0,0.6);
+      transform: scale(0.9); transition: transform 0.3s ease;
+    }
+    .modal-overlay.hidden { display: none !important; }
+    .modal-overlay:not(.hidden) .modal-card {
+      transform: scale(1);
+    }
+    .modal-icon {
+      font-size: 40px; margin-bottom: 16px;
+    }
+    .modal-card h3 {
+      font-size: 20px; font-weight: 800; margin-bottom: 10px; color: #fff;
+    }
+    .modal-card p {
+      font-size: 14px; color: var(--text-muted); line-height: 1.5; margin-bottom: 24px;
+    }
+    .modal-actions {
+      display: flex; gap: 12px;
+    }
+    .modal-btn {
+      flex: 1; padding: 12px; border: none; border-radius: 12px;
+      font-size: 14px; font-weight: 700; cursor: pointer; transition: all 0.2s;
+    }
+    .modal-btn-secondary {
+      background: rgba(255, 255, 255, 0.08); color: #fff; border: 1px solid var(--border);
+    }
+    .modal-btn-secondary:hover { background: rgba(255, 255, 255, 0.12); }
+    .modal-btn-primary {
+      background: #ef4444; color: #fff; box-shadow: 0 4px 15px rgba(239, 68, 68, 0.3);
+    }
+    .modal-btn-primary:hover { background: #dc2626; }
+    .modal-btn-success {
+      background: var(--primary); color: #000; box-shadow: 0 4px 15px rgba(0, 229, 153, 0.3);
+    }
+    .modal-btn-success:hover { background: #00cc88; }
+
+    .err-box { background: rgba(239, 68, 68, 0.1); border: 1px solid rgba(239, 68, 68, 0.2); border-radius: 14px; padding: 16px; color: #ff8a8a; text-align: center; }
+    .update-log { font-size: 12px; color: var(--text-muted); text-align: center; margin-top: 20px; font-family: monospace; }
+    
+    .wakelock-notice {
+      text-align: center; font-size: 12px; color: var(--primary); margin-top: 15px;
+      opacity: 0.8; font-weight: 500;
+    }
+
+    .hidden { display: none !important; }
+  </style>
+</head>
+
+<body>
+  <div class="container">
+    <div class="header">
+      <div class="logo-container">
+        <svg xmlns="http://www.w3.org/2000/svg" width="24" height="24" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5" stroke-linecap="round" stroke-linejoin="round"><path d="M20 10c0 6-8 12-8 12s-8-6-8-12a8 8 0 0 1 16 0Z"/><circle cx="12" cy="10" r="3"/></svg>
+      </div>
+      <h1>AynTrace</h1>
+      <p class="subtitle">Connexion Tracker GPS Mobile</p>
+    </div>
+
+    <!-- Loading State -->
+    <div id="loading" class="card" style="display: flex; justify-content: center;">
+      <div class="status-badge status-waiting"><div class="pulse"></div> RECHERCHE...</div>
+    </div>
+
+    <!-- Error State -->
+    <div id="error-section" class="hidden">
+      <div class="err-box" id="error-message"></div>
+    </div>
+
+    <!-- Device Info -->
+    <div id="device-section" class="hidden">
+      <div class="card">
+        <div class="device-info">
+          <div class="device-name" id="device-name">--</div>
+          <div class="enterprise-name">
+            <svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 21h18"/><path d="M9 8h1"/><path d="M9 12h1"/><path d="M9 16h1"/><path d="M14 8h1"/><path d="M14 12h1"/><path d="M14 16h1"/><path d="M5 21V5a2 2 0 0 1 2-2h10a2 2 0 0 1 2 2v16"/></svg>
+            <span id="enterprise-name">--</span>
+          </div>
+        </div>
+
+        <div style="text-align: center; margin-bottom: 20px;">
+          <div class="status-badge status-waiting" id="status-badge">
+            <div class="pulse"></div> <span id="status-text">Prêt au démarrage</span>
+          </div>
+        </div>
+
+        <div class="data-grid">
+          <div class="data-item">
+            <div class="data-label">Latitude</div>
+            <div class="data-value" id="lat">---</div>
+          </div>
+          <div class="data-item">
+            <div class="data-label">Longitude</div>
+            <div class="data-value" id="lng">---</div>
+          </div>
+          <div class="data-item">
+            <div class="data-label">Vitesse</div>
+            <div class="data-value"><span id="speed">0</span> km/h</div>
+          </div>
+          <div class="data-item">
+            <div class="data-label">Batterie</div>
+            <div class="data-value"><span id="battery">--</span>%</div>
+          </div>
+        </div>
+
+        <p class="update-log" id="update-log">Appuyez sur Démarrer</p>
+      </div>
+
+      <button class="btn btn-primary" id="start-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><polygon points="5 3 19 12 5 21 5 3"/></svg>
+        DÉMARRER LE SUIVI
+      </button>
+
+      <button class="btn btn-danger hidden" id="stop-btn">
+        <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.5"><rect x="3" y="3" width="18" height="18" rx="2" ry="2"/></svg>
+        ARRÊTER
+      </button>
+
+      <button class="btn btn-sos" id="sos-btn">
+        <div class="pulse"></div>
+        SIGNALER URGENCE SOS
+      </button>
+
+      <p id="wakelock-msg" class="wakelock-notice hidden">Écran maintenu allumé pour le suivi.</p>
+    </div>
+  </div>
+
+  <!-- Custom Popup Modal -->
+  <div id="custom-modal" class="modal-overlay hidden">
+    <div class="modal-card">
+      <div class="modal-icon" id="modal-icon">🚨</div>
+      <h3 id="modal-title">Confirmation</h3>
+      <p id="modal-desc">Voulez-vous vraiment envoyer un signal d'URGENCE SOS ?</p>
+      <div class="modal-actions" id="modal-actions">
+        <button class="modal-btn modal-btn-secondary" id="modal-cancel-btn">Annuler</button>
+        <button class="modal-btn modal-btn-primary" id="modal-confirm-btn">Confirmer</button>
+      </div>
+    </div>
+  </div>
+
+  <script src="tracker.js"></script>
+</body>
+
+</html>

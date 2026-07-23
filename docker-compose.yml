@@ -1,0 +1,45 @@
+services:
+  db:
+    image: postgres:16-alpine
+    container_name: ayntrace-db
+    environment:
+      POSTGRES_DB: geotrack
+      POSTGRES_USER: postgres
+      POSTGRES_PASSWORD: postgres
+    volumes:
+      - ayntrace_postgres_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U postgres -d geotrack"]
+      interval: 5s
+      timeout: 5s
+      retries: 20
+
+  backend:
+    build:
+      context: .
+      dockerfile: server/Dockerfile
+    container_name: ayntrace-backend
+    environment:
+      DATABASE_URL: postgres://postgres:postgres@db:5432/geotrack
+      JWT_SECRET: ayntrace-pfe-secret
+      PORT: 3001
+      TRACKER_URL: http://localhost
+    depends_on:
+      db:
+        condition: service_healthy
+    command: sh -c "node db/migrate.js && node db/reset-demo-pfe.js && npm start"
+    ports:
+      - "3001:3001"
+
+  frontend:
+    build:
+      context: .
+      dockerfile: Dockerfile
+    container_name: ayntrace-frontend
+    depends_on:
+      - backend
+    ports:
+      - "80:80"
+
+volumes:
+  ayntrace_postgres_data:
