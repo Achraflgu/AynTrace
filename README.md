@@ -17,8 +17,6 @@ GPS tracking and fleet management platform. PFE academic project.
   <br/><br/>
   <img src="public/screenshots/image086.png" alt="Geofences" width="49%"/>
   <img src="public/screenshots/image141.png" alt="Audit Logs" width="49%"/>
-  <br/><br/>
-  <img src="public/screenshots/image139.png" alt="User Profile" width="100%"/>
 </div>
 
 ---
